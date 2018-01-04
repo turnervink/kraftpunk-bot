@@ -1,13 +1,14 @@
 import os
 import discord
+import re
 
 client = discord.Client()
 
 hotwords = [
-    'tit',
-    'tits',
-    'titty',
-    'titties'
+    re.compile('^tit$'),
+    re.compile('^tits$'),
+    re.compile('^titty$'),
+    re.compile('^titties$')
 ]
 
 @client.event
@@ -19,7 +20,7 @@ async def on_ready():
 
 @client.event
 async def on_message(msg):
-    if any(word in msg.content.lower() for word in hotwords):
+    if any(re.search(regex, msg.content.lower()) for regex in hotwords):
         await client.send_file(msg.channel, 'thetits.png')
 
     if 'ranch' in msg.content.lower():
