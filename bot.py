@@ -5,11 +5,13 @@ import re
 client = discord.Client()
 
 hotwords = [
-    re.compile('^tit$'),
-    re.compile('^tits$'),
-    re.compile('^titty$'),
-    re.compile('^titties$')
+    re.compile('\\btit\\b'),
+    re.compile('\\btits\\b'),
+    re.compile('\\btitty\\b'),
+    re.compile('\\btitties\\b')
 ]
+
+# TODO: use regex to not match words in words
 
 @client.event
 async def on_ready():
