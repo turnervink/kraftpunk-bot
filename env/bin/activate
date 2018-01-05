@@ -77,4 +77,4 @@ if [ -n "${BASH-}" ] || [ -n "${ZSH_VERSION-}" ] ; then
     hash -r 2>/dev/null
 fi
 
-export bot_token="Mzk3OTAxMjU2NjAyOTQzNDg5.DS2ypQ.mGoM25UtTn7PtSYVva_L41l3dIQ"
+export bot_token="MzQxNjAxNDEzODgyNzA3OTcx.DTB4Kw.xNoFqWHlpG4xaus2KHnziZEwOfE"

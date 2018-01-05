@@ -1,6 +1,9 @@
 import os
 import discord
 import re
+import io
+from PIL import Image, ImageDraw
+import requests
 
 client = discord.Client()
 
@@ -25,7 +28,20 @@ async def on_message(msg):
     if any(re.search(regex, msg.content.lower()) for regex in hotwords):
         await client.send_file(msg.channel, 'thetits.png')
 
-    if 'ranch' in msg.content.lower():
-        await client.send_file(msg.channel, 'cheers.jpg')
+    if 'what if it was purple' in msg.content.lower():
+        try:
+            img = Image.open(io.BytesIO(requests.get(msg.attachments[0]['url']).content)).convert('RGBA')
+            tmp = Image.new('RGBA', img.size, (0, 0, 0, 0))
+            draw = ImageDraw.Draw(tmp)
+            draw.rectangle((0, 0) + img.size, fill=(85, 26, 139, 175))
+
+            img = Image.alpha_composite(img, tmp)
+            imgbytearr = io.BytesIO()
+            img.save(imgbytearr, format='PNG')
+            imgbytearr = imgbytearr.getvalue()
+            await client.send_file(msg.channel, io.BytesIO(imgbytearr), filename='its-purple.png')
+        except IndexError:
+            await client.send_message(msg.channel, 'You must attach a file')
+
 
 client.run(os.environ["bot_token"])
