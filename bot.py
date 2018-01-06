@@ -1,4 +1,5 @@
 import os
+import random
 import discord
 import re
 import io
@@ -13,8 +14,6 @@ hotwords = [
     re.compile('\\btitty\\b'),
     re.compile('\\btitties\\b')
 ]
-
-# TODO: use regex to not match words in words
 
 @client.event
 async def on_ready():
@@ -66,6 +65,9 @@ async def on_message(msg):
 
     if 'bird up' in msg.content.lower():
         await client.send_file(msg.channel, 'birdup.jpg')
+
+    if 'brb' or 'be right back' in msg.content.lower():
+        await client.send_file(msg.channel, 'brb/' + random.choice(os.listdir('./brb')))
 
 
 async def get_logs_from_channel(channel):
