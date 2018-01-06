@@ -29,19 +29,48 @@ async def on_message(msg):
         await client.send_file(msg.channel, 'thetits.png')
 
     if 'what if it was purple' in msg.content.lower():
-        try:
-            img = Image.open(io.BytesIO(requests.get(msg.attachments[0]['url']).content)).convert('RGBA')
-            tmp = Image.new('RGBA', img.size, (0, 0, 0, 0))
-            draw = ImageDraw.Draw(tmp)
-            draw.rectangle((0, 0) + img.size, fill=(85, 26, 139, 175))
+        attachment = None
 
-            img = Image.alpha_composite(img, tmp)
-            imgbytearr = io.BytesIO()
-            img.save(imgbytearr, format='PNG')
-            imgbytearr = imgbytearr.getvalue()
-            await client.send_file(msg.channel, io.BytesIO(imgbytearr), filename='its-purple.png')
+        try:
+            attachment = msg.attachments[0]['url']
         except IndexError:
-            await client.send_message(msg.channel, 'You must attach a file')
+            try:
+                last_msg = await get_logs_from_channel(msg.channel)
+                attachment = last_msg.attachments[0]['url']
+            except IndexError:
+                await client.send_message(msg.channel, 'Nothing to make purple!')
+
+        if attachment is not None:
+            try:
+                img = Image.open(io.BytesIO(requests.get(attachment).content)).convert('RGBA')
+                tmp = Image.new('RGBA', img.size, (0, 0, 0, 0))
+                draw = ImageDraw.Draw(tmp)
+                draw.rectangle((0, 0) + img.size, fill=(85, 26, 139, 175))
+
+                img = Image.alpha_composite(img, tmp)
+                imgbytearr = io.BytesIO()
+                img.save(imgbytearr, format='PNG')
+                imgbytearr = imgbytearr.getvalue()
+                await client.send_file(msg.channel, io.BytesIO(imgbytearr), filename='its-purple.png')
+            except OSError:
+                await client.send_message(msg.channel, 'Looks like the last sent file isn\'t an image!')
+
+async def get_logs_from_channel(channel):
+    async for m in client.logs_from(channel):
+        if m.attachments:
+            try:
+                i = Image.open(io.BytesIO(requests.get(m.attachments[0]['url']).content)).convert('RGBA')
+                return m
+            except OSError:
+                # Not an image attachment
+                continue
+
+    return None
+
+async def get_last_message_from(channel, message):
+    async for m in client.logs_from(channel, limit=1, before=message):
+        return m
+
 
 
 client.run(os.environ["bot_token"])
