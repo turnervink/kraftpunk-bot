@@ -55,6 +55,19 @@ async def on_message(msg):
             except OSError:
                 await client.send_message(msg.channel, 'Looks like the last sent file isn\'t an image!')
 
+    if 'sucks' in msg.content.lower():
+        await client.send_file(msg.channel, 'thissucksman.png')
+
+    if 'wack' in msg.content.lower():
+        await client.send_file(msg.channel, 'wack.png')
+
+    if 'boo' in msg.content.lower():
+        await client.send_file(msg.channel, 'imright.png')
+
+    if 'bird up' in msg.content.lower():
+        await client.send_file(msg.channel, 'birdup.jpg')
+
+
 async def get_logs_from_channel(channel):
     async for m in client.logs_from(channel):
         if m.attachments:
@@ -66,6 +79,7 @@ async def get_logs_from_channel(channel):
                 continue
 
     return None
+
 
 async def get_last_message_from(channel, message):
     async for m in client.logs_from(channel, limit=1, before=message):
