@@ -66,10 +66,9 @@ async def on_message(msg):
     if 'bird up' in msg.content.lower():
         await client.send_file(msg.channel, 'birdup.jpg')
 
-    if 'brb' or 'be right back' in msg.content.lower():
-        choice = random.choice(os.listdir('./brb'))
-        print(choice)
-        await client.send_file(msg.channel, 'brb/' + choice)
+    # if 'brb' or 'be right back' in msg.content.lower():
+    #     choice = random.randint(1, 17)
+    #     await client.send_file(msg.channel, 'brb/' + str(random.randint(1, 17)) + '.png')
 
 
 async def get_logs_from_channel(channel):
