@@ -3,6 +3,21 @@
   <component name="ChangeListManager">
     <list default="true" id="24708293-2def-4644-b6ff-3c873a9e6993" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/bot.py" afterPath="$PROJECT_DIR$/bot.py" />
+      <change beforePath="$PROJECT_DIR$/brb/Screen Shot 2018-01-06 at 15.41.11.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/brb/Screen Shot 2018-01-06 at 15.41.28.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/brb/Screen Shot 2018-01-06 at 15.41.36.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/brb/Screen Shot 2018-01-06 at 15.42.01.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/brb/Screen Shot 2018-01-06 at 15.42.24.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/brb/Screen Shot 2018-01-06 at 15.42.50.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/brb/Screen Shot 2018-01-06 at 15.43.05.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/brb/Screen Shot 2018-01-06 at 15.43.26.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/brb/Screen Shot 2018-01-06 at 15.44.35.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/brb/Screen Shot 2018-01-06 at 15.45.13.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/brb/Screen Shot 2018-01-06 at 15.46.50.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/brb/Screen Shot 2018-01-06 at 15.47.03.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/brb/Screen Shot 2018-01-06 at 15.47.24.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/brb/Screen Shot 2018-01-06 at 15.47.50.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/brb/Screen Shot 2018-01-06 at 15.48.01.png" afterPath="" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,8 +31,8 @@
       <file leaf-file-name="bot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="308">
-              <caret line="64" column="0" lean-forward="true" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
+            <state relative-caret-position="474">
+              <caret line="69" column="49" lean-forward="false" selection-start-line="69" selection-start-column="49" selection-end-line="69" selection-end-column="49" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -241,8 +256,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="64" column="0" lean-forward="true" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
+        <state relative-caret-position="474">
+          <caret line="69" column="49" lean-forward="false" selection-start-line="69" selection-start-column="49" selection-end-line="69" selection-end-column="49" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>

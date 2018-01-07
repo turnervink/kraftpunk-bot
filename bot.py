@@ -66,8 +66,9 @@ async def on_message(msg):
     if 'bird up' in msg.content.lower():
         await client.send_file(msg.channel, 'birdup.jpg')
 
-    # if 'brb' or 'be right back' in msg.content.lower():
-    #     await client.send_file(msg.channel, 'brb/' + random.choice(os.listdir('./brb')))
+    if 'brb' or 'be right back' in msg.content.lower():
+        print(random.choice(os.listdir('./brb')))
+        await client.send_file(msg.channel, 'brb/' + random.choice(os.listdir('./brb')))
 
 
 async def get_logs_from_channel(channel):
@@ -86,7 +87,5 @@ async def get_logs_from_channel(channel):
 async def get_last_message_from(channel, message):
     async for m in client.logs_from(channel, limit=1, before=message):
         return m
-
-
 
 client.run(os.environ["bot_token"])
