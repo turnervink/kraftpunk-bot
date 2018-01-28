@@ -22,12 +22,18 @@ bustinthru = [
     'hannibal bustin\' thru'
 ]
 
+
+def discrete_phrase(phrase):
+    return re.compile('\\b' + phrase + '\\b')
+
+
 @client.event
 async def on_ready():
     print('Logged in as')
     print(client.user.name)
     print(client.user.id)
     print('------')
+
 
 @client.event
 async def on_message(msg):
@@ -61,29 +67,38 @@ async def on_message(msg):
             except OSError:
                 await client.send_message(msg.channel, 'Looks like the last sent file isn\'t an image!')
 
-    if 'sucks' in msg.content.lower():
+    if re.search(discrete_phrase('sucks'), msg.content.lower()):
         await client.send_file(msg.channel, 'thissucksman.png')
 
-    if 'wack' in msg.content.lower():
+    if re.search(discrete_phrase('wack'), msg.content.lower()):
         await client.send_file(msg.channel, 'wack.png')
 
-    if 'boo' in msg.content.lower():
+    if re.search(discrete_phrase('boo'), msg.content.lower()):
         await client.send_file(msg.channel, 'imright.png')
 
-    if 'bird up' in msg.content.lower():
+    if re.search(discrete_phrase('bird up'), msg.content.lower()):
         await client.send_file(msg.channel, 'birdup.jpg')
 
-    if 'rice' in msg.content.lower():
+    if re.search(discrete_phrase('rice'), msg.content.lower()):
         await client.send_file(msg.channel, 'rice.png')
 
-    if re.search('\\bhannibal bustin\'? (thru|through)\\b', msg.content.lower()):
+    if re.search('\\bhannibal (bustin\'?|busting) (thru|through)\\b', msg.content.lower()):
         await client.send_file(msg.channel, 'hbt.jpg')
 
-    if 'call me' in msg.content.lower():
+    if re.search(discrete_phrase('call me'), msg.content.lower()):
         await client.send_file(msg.channel, 'callme.jpg')
 
     if re.search('(brb|be right back)', msg.content.lower()):
         await client.send_file(msg.channel, './brb/' + random.choice(os.listdir('./brb')))
+
+    if re.search(discrete_phrase('who killed hannibal?'), msg.content.lower()):
+        await client.send_file(msg.channel, 'death.png')
+
+    if re.search('\\bburgers?\\b', msg.content.lower()):
+        await client.send_file(msg.channel, 'burgers.gif')
+
+    if re.search(discrete_phrase('get yourself together'), msg.content.lower()):
+        await client.send_file(msg.channel, 'philly.jpg')
 
 
 async def get_logs_from_channel(channel):
