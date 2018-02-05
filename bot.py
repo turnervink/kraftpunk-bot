@@ -15,11 +15,10 @@ hotwords = [
     re.compile('\\btitties\\b')
 ]
 
-bustinthru = [
-    'hannibal bustin\' through',
-    'hannibal bustin through',
-    'hannibal bustin thru',
-    'hannibal bustin\' thru'
+wth = [
+    re.compile('\\bwhat in the (god damn|goddamn) hell are you talkin\'?g? bout\\b\?'),
+    re.compile('\\bwhat are you talking? about\\b\??'),
+    re.compile('\\b(what the (hell|fuck)|wt(h|f)) are you talking? about\\b\??')
 ]
 
 
@@ -40,7 +39,7 @@ async def on_message(msg):
     if any(re.search(regex, msg.content.lower()) for regex in hotwords):
         await client.send_file(msg.channel, 'thetits.png')
 
-    if 'what if it was purple' in msg.content.lower():
+    if re.search(discrete_phrase('what if it was purple'), msg.content.lower()):
         attachment = None
 
         try:
@@ -99,6 +98,12 @@ async def on_message(msg):
 
     if re.search(discrete_phrase('get yourself together'), msg.content.lower()):
         await client.send_file(msg.channel, 'philly.jpg')
+
+    if re.search(discrete_phrase('why would you say something so controversial yet so brave?'), msg.content.lower()):
+        await client.send_file(msg.channel, 'sobrave.gif')
+
+    if any(re.search(regex, msg.content.lower()) for regex in wth):
+        await client.send_file(msg.channel, 'wth.gif')
 
 
 async def get_logs_from_channel(channel):
