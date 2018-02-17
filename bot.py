@@ -105,6 +105,9 @@ async def on_message(msg):
     if any(re.search(regex, msg.content.lower()) for regex in wth):
         await client.send_file(msg.channel, 'wth.gif')
 
+    if re.search(discrete_phrase('bitch'), msg.content.lower()):
+        await client.send_file(msg.channel, 'bitch.png')
+
 
 async def get_logs_from_channel(channel):
     async for m in client.logs_from(channel):
