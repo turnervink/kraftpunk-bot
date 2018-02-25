@@ -140,6 +140,26 @@ async def on_message(msg):
 
         await client.send_file(msg.channel, 'bitch.png')
 
+    if re.search(discrete_phrase('i\'m dying'), msg.content.lower()):
+        requests.post('https://hooks.zapier.com/hooks/catch/2977009/zwh2s3/', data={'serverId': str(msg.server.id), 'serverName': msg.server.name})
+
+        await client.send_file(msg.channel, 'dying.jpg')
+
+    if re.search(discrete_phrase('catch the excitement'), msg.content.lower()):
+        requests.post('https://hooks.zapier.com/hooks/catch/2977009/zwh2s3/', data={'serverId': str(msg.server.id), 'serverName': msg.server.name})
+
+        await client.send_file(msg.channel, 'excitement.png')
+
+    if re.search(discrete_phrase('beer'), msg.content.lower()):
+        requests.post('https://hooks.zapier.com/hooks/catch/2977009/zwh2s3/', data={'serverId': str(msg.server.id), 'serverName': msg.server.name})
+
+        await client.send_file(msg.channel, 'morpheus.png')
+
+    if re.search(discrete_phrase('weed'), msg.content.lower()):
+        requests.post('https://hooks.zapier.com/hooks/catch/2977009/zwh2s3/', data={'serverId': str(msg.server.id), 'serverName': msg.server.name})
+
+        await client.send_file(msg.channel, '520bro.jpg')
+
 
 async def get_logs_from_channel(channel):
     async for m in client.logs_from(channel):
