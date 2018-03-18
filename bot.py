@@ -70,11 +70,6 @@ async def on_message(msg):
             except OSError:
                 await client.send_message(msg.channel, 'Looks like the last sent file isn\'t an image!')
 
-    if re.search(discrete_phrase('sucks'), msg.content.lower()):
-        requests.post('https://hooks.zapier.com/hooks/catch/2977009/zwh2s3/', data={'serverId': str(msg.server.id), 'serverName': msg.server.name})
-
-        await client.send_file(msg.channel, 'thissucksman.png')
-
     if re.search(discrete_phrase('wack'), msg.content.lower()):
         requests.post('https://hooks.zapier.com/hooks/catch/2977009/zwh2s3/', data={'serverId': str(msg.server.id), 'serverName': msg.server.name})
 
