@@ -126,6 +126,9 @@ async def on_message(msg):
     if re.search('\\bfrozen (yogurt|yoghurt)\\b', msg.content.lower()):
         await client.send_file(msg.channel, 'froyo.png', content=random.choice(froyo_captions))
 
+    if re.search('(investigate (311|3/11)|\\b(311|3/11)\\b)', msg.content.lower()):
+        await client.send_file(msg.channel, '311.png')
+
 
 async def get_logs_from_channel(channel):
     async for m in client.logs_from(channel):
