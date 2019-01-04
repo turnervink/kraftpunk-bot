@@ -99,7 +99,7 @@ async def on_message(msg):
     if re.search('\\bburgers?\\b', msg.content.lower()):
         await client.send_file(msg.channel, 'burgers.gif')
 
-    if re.search(discrete_phrase('get yourself together'), msg.content.lower()):
+    if re.search('\\b(get yourself together|move to (philly|philadelphia)|philly|philadelphia|hummus)\\b', msg.content.lower()):
         await client.send_file(msg.channel, 'philly.jpg')
 
     if re.search(discrete_phrase('why would you say something so controversial yet so brave?'), msg.content.lower()):
