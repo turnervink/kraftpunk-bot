@@ -129,6 +129,12 @@ async def on_message(msg):
     if re.search('(investigate (311|3/11)|\\b(311|3/11)\\b)', msg.content.lower()):
         await client.send_file(msg.channel, '311.png')
 
+    if re.search('\\b(dinosaur|dino|stegosaurus|safety stegosaurus|safety dinosaur)\\b', msg.content.lower()):
+        await client.send_file(msg.channel, 'dinosaur.png')
+
+    if re.search('\\b(froot loops|fruit loops)\\b', msg.content.lower()):
+        await client.send_file(msg.channel, 'frootloops.png')
+
 
 async def get_logs_from_channel(channel):
     async for m in client.logs_from(channel):
