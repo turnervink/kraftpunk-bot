@@ -143,6 +143,9 @@ async def on_message(msg):
         else:
             await client.send_file(msg.channel, 'questlove.png', content="Yo " + msg.author.mention + "... Questlove's in the house!")
 
+    if re.search('\\bgrizzly bear\\b', msg.content.lower()):
+        await client.send_file(msg.channel, 'bear.png')
+
 async def get_logs_from_channel(channel):
     async for m in client.logs_from(channel):
         if m.attachments:
