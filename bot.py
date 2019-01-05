@@ -146,6 +146,15 @@ async def on_message(msg):
     if re.search('\\bgrizzly bear\\b', msg.content.lower()):
         await client.send_file(msg.channel, 'bear.png')
 
+    if re.search('\\bchristina applegate\\b', msg.content.lower()):
+        await client.send_file(msg.channel, 'applegate.png', content="Quick shoutout to Christina Applegate!")
+
+    if re.search('\\blettuce\\b', msg.content.lower()):
+        await client.send_file(msg.channel, 'lettuce.png')
+
+    if re.search('\\bcoachella\\b', msg.content.lower()):
+        await client.send_file(msg.channel, 'coachella.png', content="Coachella sucks this year")
+
 async def get_logs_from_channel(channel):
     async for m in client.logs_from(channel):
         if m.attachments:
