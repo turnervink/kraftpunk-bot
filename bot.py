@@ -42,6 +42,8 @@ async def on_ready():
 
 @client.event
 async def on_message(msg):
+    if msg.author.id == client.user.id: return
+
     if any(re.search(regex, msg.content.lower()) for regex in hotwords):
         await client.send_file(msg.channel, 'thetits.png')
 
@@ -135,6 +137,11 @@ async def on_message(msg):
     if re.search('\\b(froot loops|fruit loops)\\b', msg.content.lower()):
         await client.send_file(msg.channel, 'frootloops.png')
 
+    if re.search('\\bquestlove\\b', msg.content.lower()):
+        if re.search("\\bquestlove you're not in the house\\b", msg.content.lower()):
+            await client.send_file(msg.channel, 'notinthehouse.png', content="Questlove you're not in the house. You're nowhere...")
+        else:
+            await client.send_file(msg.channel, 'questlove.png', content="Yo " + msg.author.mention + "... Questlove's in the house!")
 
 async def get_logs_from_channel(channel):
     async for m in client.logs_from(channel):
