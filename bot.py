@@ -102,10 +102,10 @@ async def on_message(msg):
         await client.send_file(msg.channel, 'burgers.gif')
 
     if re.search('\\b(get yourself together|move to (philly|philadelphia)|philly|philadelphia|hummus)\\b', msg.content.lower()):
-        await client.send_file(msg.channel, 'philly.jpg')
+        await client.send_message(msg.channel, "https://i.imgur.com/EdYvDjN.gifv")
 
     if re.search(discrete_phrase('why would you say something so controversial yet so brave?'), msg.content.lower()):
-        await client.send_file(msg.channel, 'sobrave.gif')
+        await client.send_message(msg.channel, 'sobrave.gif')
 
     if any(re.search(regex, msg.content.lower()) for regex in wth):
         await client.send_file(msg.channel, 'wth.gif')
