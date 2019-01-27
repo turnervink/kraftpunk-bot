@@ -27,6 +27,20 @@ froyo_captions = [
     "Why do you ***LIE*** to me??"
 ]
 
+prizes = [
+    "a preowned condom",
+    "a trip to North Korea",
+    "one year's supply of calendars",
+    "five free google searches",
+    "a wet cardboard box",
+    "fun times",
+    "big bucks",
+    "death",
+    "autoerotic asphyxiation",
+    "autozone coupons",
+    "a free spin"
+]
+
 
 def discrete_phrase(phrase):
     return re.compile('\\b' + phrase + '\\b')
@@ -105,7 +119,7 @@ async def on_message(msg):
         await client.send_message(msg.channel, "https://i.imgur.com/EdYvDjN.gifv")
 
     if re.search(discrete_phrase('why would you say something so controversial yet so brave?'), msg.content.lower()):
-        await client.send_message(msg.channel, 'sobrave.gif')
+        await client.send_file(msg.channel, 'sobrave.gif')
 
     if any(re.search(regex, msg.content.lower()) for regex in wth):
         await client.send_file(msg.channel, 'wth.gif')
@@ -154,6 +168,13 @@ async def on_message(msg):
 
     if re.search('\\bcoachella\\b', msg.content.lower()):
         await client.send_file(msg.channel, 'coachella.png', content="Coachella sucks this year")
+        
+    if re.search('\\bscientolog(y|ist|ists)\\b', msg.content.lower()):
+        await client.send_message(msg.channel, "https://i.redd.it/vxs0mrzujgy01.jpg \n His real name was L. Ron Hoyabembe!")
+        
+    if re.search(discrete_phrase("wheel of prizes"), msg.content.lower()):
+        await client.send_message(msg.channel, "It's time to play Wheel of Prizes! \n https://media1.tenor.com/images/a6f3ef0d1f76d12af57aa2baa20f3fca/tenor.gif?itemid=11471078")
+        await client.send_message(msg.channel, "You won " + random.choice(prizes))
 
 async def get_logs_from_channel(channel):
     async for m in client.logs_from(channel):
