@@ -28,7 +28,6 @@ froyo_captions = [
 ]
 
 prizes = [
-    "a preowned condom",
     "a trip to North Korea",
     "one year's supply of calendars",
     "five free google searches",
