@@ -1,37 +1,25 @@
 import img.external_images as external_images
+import strings as strings
 
 import io
 import os
 import random
 import re
 
+import asyncio
 import discord
 from PIL import Image, ImageDraw
 import requests
 
 client = discord.Client()
 
-froyo_captions = [
-    "You're in Gerald's world now baby!",
-    "It was *cold*, but it wasn't ***frozen!***",
-    "Why do you ***LIE*** to me??"
-]
-
-thetits_triggers = [
-    'tits?',
-    'titty',
-    'titties'
-]
-
-wth_triggers = [
-    'what in the (god damn|goddamn) hell are you talkin\'?g? bout\\?',
-    'what are you talking? about\\??',
-    '(what the (hell|fuck)|wt(h|f)) are you talking? about\\??'
-]
-
 
 def message_has_trigger(msg, keyword):
     return re.search('\\b' + keyword + '\\b', msg.content.lower())
+
+
+def message_mentions_bot(msg):
+    return re.search('<@' + client.user.id + '>', msg.content.lower())
 
 
 async def send_image(channel, img, caption=''):
@@ -46,7 +34,7 @@ async def get_last_image_from_channel(channel):
     async for m in client.logs_from(channel):
         if m.attachments:
             try:
-                i = Image.open(io.BytesIO(requests.get(m.attachments[0]['url']).content)).convert('RGBA')
+                Image.open(io.BytesIO(requests.get(m.attachments[0]['url']).content)).convert('RGBA')
                 return m
             except OSError:
                 # Not an image attachment
@@ -79,6 +67,9 @@ async def on_ready():
 async def on_message(msg):
     if msg.author.id == client.user.id:
         return
+
+    elif message_mentions_bot(msg) and message_has_trigger(msg, '(thanks|thank you)'):
+        await send_message(msg.channel, "You're welcome " + msg.author.mention)
 
     elif message_has_trigger(msg, 'what if it was purple'):
         attachment = None
@@ -139,13 +130,23 @@ async def on_message(msg):
         await send_image(msg.channel, 'frootloops.png')
 
     elif message_has_trigger(msg, '(frozen (yogurt|yoghurt)|froyo)'):
-        await send_image(msg.channel, 'froyo.png', caption=random.choice(froyo_captions))
+        await send_image(msg.channel, 'froyo.png', caption=random.choice(strings.froyo_captions))
 
     elif message_has_trigger(msg, 'hannibal (bustin\'?|busting) (thru|through)'):
         await send_image(msg.channel, 'hbt.jpg')
 
+    elif message_mentions_bot(msg) and message_has_trigger(msg, '(help|what\'s up)'):
+        await send_image(msg.channel, 'heywhatsup.png',
+                         caption="Hey what's up? I'm Kraft Punk! Did you guys know I cannot die?")
+        await send_message(msg.channel, "I'll just be here waiting to drop into the conversation with some "
+                                        "pics from the Eric Andre show")
+        await send_message(msg.channel, "See you later!")
+
     elif message_has_trigger(msg, 'boo'):
         await send_image(msg.channel, 'imright.png')
+
+    elif message_mentions_bot(msg) and message_has_trigger(msg, '(can you leave|leave|get out of here|please leave)'):
+        await send_image(msg.channel, 'leaving.png', caption='Okay, bye!')
 
     elif message_has_trigger(msg, 'lettuce'):
         await send_image(msg.channel, 'lettuce.png')
@@ -165,16 +166,26 @@ async def on_message(msg):
     elif message_has_trigger(msg, 'rice'):
         await send_image(msg.channel, 'rice.png')
 
+    elif message_has_trigger(msg, '(scientology|l.? ron hubbard|lrh|hubbard)'):
+        await send_image(msg.channel, 'scientology.png', caption='There is no hell!')
+
     elif message_has_trigger(msg, 'so controversial (yet|but) so brave\\??'):
         await send_image(msg.channel, 'sobrave.gif')
 
-    elif any(message_has_trigger(msg, trigger) for trigger in thetits_triggers):
+    elif any(message_has_trigger(msg, trigger) for trigger in strings.thetits_triggers):
         await send_image(msg.channel, 'thetits.png')
 
     elif message_has_trigger(msg, 'wack'):
         await send_image(msg.channel, 'wack.png')
 
-    elif any(message_has_trigger(msg, trigger) for trigger in wth_triggers):
+    elif message_has_trigger(msg, 'wheel of prizes'):
+        await send_message(msg.channel, "It's time for the Wheel of Prizes!")
+        await asyncio.sleep(1)
+        await send_message(msg.channel, external_images.wheel_of_prizes)
+        await asyncio.sleep(5)
+        await send_message(msg.channel, msg.author.mention + ' you won: ' + random.choice(strings.prizes))
+
+    elif any(message_has_trigger(msg, trigger) for trigger in strings.wth_triggers):
         await send_image(msg.channel, 'wth.gif')
 
 
