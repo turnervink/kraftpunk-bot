@@ -1,161 +1,48 @@
+import img.external_images as external_images
+
+import io
 import os
 import random
-import discord
 import re
-import io
+
+import discord
 from PIL import Image, ImageDraw
 import requests
 
 client = discord.Client()
 
-hotwords = [
-    re.compile('\\btit\\b'),
-    re.compile('\\btits\\b'),
-    re.compile('\\btitty\\b'),
-    re.compile('\\btitties\\b')
-]
-
-wth = [
-    re.compile('\\bwhat in the (god damn|goddamn) hell are you talkin\'?g? bout\\b\?'),
-    re.compile('\\bwhat are you talking? about\\b\??'),
-    re.compile('\\b(what the (hell|fuck)|wt(h|f)) are you talking? about\\b\??')
-]
-
 froyo_captions = [
     "You're in Gerald's world now baby!",
-    "It was *cold*, but it wasn't ***frozen***!",
+    "It was *cold*, but it wasn't ***frozen!***",
     "Why do you ***LIE*** to me??"
 ]
 
+thetits_triggers = [
+    'tits?',
+    'titty',
+    'titties'
+]
 
-def discrete_phrase(phrase):
-    return re.compile('\\b' + phrase + '\\b')
+wth_triggers = [
+    'what in the (god damn|goddamn) hell are you talkin\'?g? bout\\?',
+    'what are you talking? about\\??',
+    '(what the (hell|fuck)|wt(h|f)) are you talking? about\\??'
+]
 
 
-@client.event
-async def on_ready():
-    print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
-    print('------')
+def message_has_trigger(msg, keyword):
+    return re.search('\\b' + keyword + '\\b', msg.content.lower())
 
 
-@client.event
-async def on_message(msg):
-    if msg.author.id == client.user.id: return
+async def send_image(channel, img, caption=''):
+    await client.send_file(channel, './img/' + img, content=caption)
 
-    if any(re.search(regex, msg.content.lower()) for regex in hotwords):
-        await client.send_file(msg.channel, 'thetits.png')
 
-    if re.search(discrete_phrase('what if it was purple'), msg.content.lower()):
-        attachment = None
+async def send_message(channel, msg):
+    await client.send_message(channel, msg)
 
-        try:
-            attachment = msg.attachments[0]['url']
-        except IndexError:
-            try:
-                last_msg = await get_logs_from_channel(msg.channel)
-                attachment = last_msg.attachments[0]['url']
-            except IndexError:
-                await client.send_message(msg.channel, 'Nothing to make purple!')
 
-        if attachment is not None:
-            try:
-                img = Image.open(io.BytesIO(requests.get(attachment).content)).convert('RGBA')
-                tmp = Image.new('RGBA', img.size, (0, 0, 0, 0))
-                draw = ImageDraw.Draw(tmp)
-                draw.rectangle((0, 0) + img.size, fill=(85, 26, 139, 175))
-
-                img = Image.alpha_composite(img, tmp)
-                imgbytearr = io.BytesIO()
-                img.save(imgbytearr, format='PNG')
-                imgbytearr = imgbytearr.getvalue()
-                await client.send_file(msg.channel, io.BytesIO(imgbytearr), filename='its-purple.png')
-            except OSError:
-                await client.send_message(msg.channel, 'Looks like the last sent file isn\'t an image!')
-
-    if re.search(discrete_phrase('wack'), msg.content.lower()):
-        await client.send_file(msg.channel, 'wack.png')
-
-    if re.search(discrete_phrase('boo'), msg.content.lower()):
-        await client.send_file(msg.channel, 'imright.png')
-
-    if re.search(discrete_phrase('bird up'), msg.content.lower()):
-        await client.send_file(msg.channel, 'birdup.jpg')
-
-    if re.search(discrete_phrase('rice'), msg.content.lower()):
-        await client.send_file(msg.channel, 'rice.png')
-
-    if re.search('\\bhannibal (bustin\'?|busting) (thru|through)\\b', msg.content.lower()):
-        await client.send_file(msg.channel, 'hbt.jpg')
-
-    if re.search(discrete_phrase('call me'), msg.content.lower()):
-        await client.send_file(msg.channel, 'callme.jpg')
-
-    if re.search('(brb|be right back)', msg.content.lower()):
-        await client.send_file(msg.channel, './brb/' + random.choice(os.listdir('./brb')))
-
-    if re.search(discrete_phrase('who killed hannibal?'), msg.content.lower()):
-        await client.send_file(msg.channel, 'death.png')
-
-    if re.search('\\bburgers?\\b', msg.content.lower()):
-        await client.send_file(msg.channel, 'burgers.gif')
-
-    if re.search('\\b(get yourself together|move to (philly|philadelphia)|philly|philadelphia|hummus)\\b', msg.content.lower()):
-        await client.send_message(msg.channel, "https://i.imgur.com/EdYvDjN.gifv")
-
-    if re.search(discrete_phrase('why would you say something so controversial yet so brave?'), msg.content.lower()):
-        await client.send_message(msg.channel, 'sobrave.gif')
-
-    if any(re.search(regex, msg.content.lower()) for regex in wth):
-        await client.send_file(msg.channel, 'wth.gif')
-
-    if re.search(discrete_phrase('bitch'), msg.content.lower()):
-        await client.send_file(msg.channel, 'bitch.png')
-
-    if re.search(discrete_phrase('i\'m dying'), msg.content.lower()):
-        await client.send_file(msg.channel, 'dying.jpg')
-
-    if re.search(discrete_phrase('catch the excitement'), msg.content.lower()):
-        await client.send_file(msg.channel, 'excitement.png')
-
-    if re.search(discrete_phrase('beer'), msg.content.lower()):
-        await client.send_file(msg.channel, 'morpheus.png')
-
-    if re.search(discrete_phrase('weed'), msg.content.lower()):
-        await client.send_file(msg.channel, '520bro.jpg')
-
-    if re.search('\\bfrozen (yogurt|yoghurt)\\b', msg.content.lower()):
-        await client.send_file(msg.channel, 'froyo.png', content=random.choice(froyo_captions))
-
-    if re.search('(investigate (311|3/11)|\\b(311|3/11)\\b)', msg.content.lower()):
-        await client.send_file(msg.channel, '311.png')
-
-    if re.search('\\b(dinosaur|dino|stegosaurus|safety stegosaurus|safety dinosaur)\\b', msg.content.lower()):
-        await client.send_file(msg.channel, 'dinosaur.png')
-
-    if re.search('\\b(froot loops|fruit loops)\\b', msg.content.lower()):
-        await client.send_file(msg.channel, 'frootloops.png')
-
-    if re.search('\\bquestlove\\b', msg.content.lower()):
-        if re.search("\\bquestlove you're not in the house\\b", msg.content.lower()):
-            await client.send_file(msg.channel, 'notinthehouse.png', content="Questlove you're not in the house. You're nowhere...")
-        else:
-            await client.send_file(msg.channel, 'questlove.png', content="Yo " + msg.author.mention + "... Questlove's in the house!")
-
-    if re.search('\\bgrizzly bear\\b', msg.content.lower()):
-        await client.send_file(msg.channel, 'bear.png')
-
-    if re.search('\\bchristina applegate\\b', msg.content.lower()):
-        await client.send_file(msg.channel, 'applegate.png', content="Quick shoutout to Christina Applegate!")
-
-    if re.search('\\blettuce\\b', msg.content.lower()):
-        await client.send_file(msg.channel, 'lettuce.png')
-
-    if re.search('\\bcoachella\\b', msg.content.lower()):
-        await client.send_file(msg.channel, 'coachella.png', content="Coachella sucks this year")
-
-async def get_logs_from_channel(channel):
+async def get_last_image_from_channel(channel):
     async for m in client.logs_from(channel):
         if m.attachments:
             try:
@@ -168,8 +55,127 @@ async def get_logs_from_channel(channel):
     return None
 
 
-async def get_last_message_from(channel, message):
-    async for m in client.logs_from(channel, limit=1, before=message):
-        return m
+async def make_image_purple(img):
+    tmp = Image.new('RGBA', img.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(tmp)
+    draw.rectangle((0, 0) + img.size, fill=(85, 26, 139, 175))
+
+    img = Image.alpha_composite(img, tmp)
+    imgbytearr = io.BytesIO()
+    img.save(imgbytearr, format='PNG')
+    imgbytearr = imgbytearr.getvalue()
+    return io.BytesIO(imgbytearr)
+
+
+@client.event
+async def on_ready():
+    print('Logged in as')
+    print(client.user.name)
+    print(client.user.id)
+    print('------')
+
+
+@client.event
+async def on_message(msg):
+    if msg.author.id == client.user.id:
+        return
+
+    elif message_has_trigger(msg, 'what if it was purple'):
+        attachment = None
+
+        try:
+            attachment = msg.attachments[0]['url']
+        except IndexError:
+            try:
+                last_msg = await get_last_image_from_channel(msg.channel)
+                attachment = last_msg.attachments[0]['url']
+            except (IndexError, AttributeError):
+                await client.send_message(msg.channel, 'Nothing to make purple!')
+
+        if attachment is not None:
+            try:
+                img = Image.open(io.BytesIO(requests.get(attachment).content)).convert('RGBA')
+                await client.send_file(msg.channel, await make_image_purple(img), filename='its-purple.png')
+            except OSError:
+                await client.send_message(msg.channel, 'Looks like the last sent file isn\'t an image!')
+
+    elif message_has_trigger(msg, '(investigate (311|3/11)|(311|3/11))'):
+        await send_image(msg.channel, '311.png')
+
+    elif message_has_trigger(msg, 'weed'):
+        await send_image(msg.channel, '520bro.jpg')
+
+    elif message_has_trigger(msg, 'christina applegate'):
+        await send_image(msg.channel, 'applegate.png', caption='Quick shoutout to Christina Applegate!')
+
+    elif message_has_trigger(msg, 'grizzly bear'):
+        await send_image(msg.channel, 'bear.png')
+
+    elif message_has_trigger(msg, 'bird up'):
+        await send_image(msg.channel, 'birdup.jpg')
+
+    elif message_has_trigger(msg, 'bitch'):
+        await send_image(msg.channel, 'bitch.png')
+
+    elif message_has_trigger(msg, '(burger|hamburger|cheeseburger)s?'):
+        await send_image(msg.channel, 'burgers.gif')
+
+    elif message_has_trigger(msg, 'call me'):
+        await send_image(msg.channel, 'callme.jpg')
+
+    elif message_has_trigger(msg, 'coachella'):
+        await send_image(msg.channel, 'coachella.png')
+
+    elif message_has_trigger(msg, 'who killed hannibal\\??'):
+        await send_image(msg.channel, 'death.png')
+
+    elif message_has_trigger(msg, '(dinosaur|dino|stegosaurus|safety stegosaurus|safety dinosaur)'):
+        await send_image(msg.channel, 'dinosaur.png')
+
+    elif message_has_trigger(msg, '(catch the excitement|excited)'):
+        await send_image(msg.channel, 'excitement.png')
+
+    elif message_has_trigger(msg, '(froot|fruit) loops'):
+        await send_image(msg.channel, 'frootloops.png')
+
+    elif message_has_trigger(msg, '(frozen (yogurt|yoghurt)|froyo)'):
+        await send_image(msg.channel, 'froyo.png', caption=random.choice(froyo_captions))
+
+    elif message_has_trigger(msg, 'hannibal (bustin\'?|busting) (thru|through)'):
+        await send_image(msg.channel, 'hbt.jpg')
+
+    elif message_has_trigger(msg, 'boo'):
+        await send_image(msg.channel, 'imright.png')
+
+    elif message_has_trigger(msg, 'lettuce'):
+        await send_image(msg.channel, 'lettuce.png')
+
+    elif message_has_trigger(msg, '(morpheus|matrix)'):
+        await send_image(msg.channel, 'morpheus.png')
+
+    elif message_has_trigger(msg, 'questlove'):
+        if message_has_trigger(msg, "questlove you're not in the house"):
+            await send_image(msg.channel, 'notinthehouse.png')
+        else:
+            await send_image(msg.channel, 'questlove.png')
+
+    elif message_has_trigger(msg, '(get yourself together|move to (philly|philadelphia)|philly|philadelphia|hummus)'):
+        await send_message(msg.channel, external_images.philly)
+
+    elif message_has_trigger(msg, 'rice'):
+        await send_image(msg.channel, 'rice.png')
+
+    elif message_has_trigger(msg, 'so controversial (yet|but) so brave\\??'):
+        await send_image(msg.channel, 'sobrave.gif')
+
+    elif any(message_has_trigger(msg, trigger) for trigger in thetits_triggers):
+        await send_image(msg.channel, 'thetits.png')
+
+    elif message_has_trigger(msg, 'wack'):
+        await send_image(msg.channel, 'wack.png')
+
+    elif any(message_has_trigger(msg, trigger) for trigger in wth_triggers):
+        await send_image(msg.channel, 'wth.gif')
+
 
 client.run(os.environ["bot_token"])
