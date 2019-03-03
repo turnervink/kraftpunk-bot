@@ -1,5 +1,4 @@
-#!/Users/turner/Documents/Development/kraftpunk-bot/venv/bin/python3.6
-
+#!/Users/turner/Documents/Development/PyCharm_Projects/kraftpunk-bot/venv/bin/python3.5
 # -*- coding: utf-8 -*-
 import re
 import sys
