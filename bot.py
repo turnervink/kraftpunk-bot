@@ -1,33 +1,17 @@
 import img.external_images as external_images
+import strings as strings
 
 import io
 import os
 import random
 import re
 
+import asyncio
 import discord
 from PIL import Image, ImageDraw
 import requests
 
 client = discord.Client()
-
-froyo_captions = [
-    "You're in Gerald's world now baby!",
-    "It was *cold*, but it wasn't ***frozen!***",
-    "Why do you ***LIE*** to me??"
-]
-
-thetits_triggers = [
-    'tits?',
-    'titty',
-    'titties'
-]
-
-wth_triggers = [
-    'what in the (god damn|goddamn) hell are you talkin\'?g? bout\\?',
-    'what are you talking? about\\??',
-    '(what the (hell|fuck)|wt(h|f)) are you talking? about\\??'
-]
 
 
 def message_has_trigger(msg, keyword):
@@ -50,7 +34,7 @@ async def get_last_image_from_channel(channel):
     async for m in client.logs_from(channel):
         if m.attachments:
             try:
-                i = Image.open(io.BytesIO(requests.get(m.attachments[0]['url']).content)).convert('RGBA')
+                Image.open(io.BytesIO(requests.get(m.attachments[0]['url']).content)).convert('RGBA')
                 return m
             except OSError:
                 # Not an image attachment
@@ -146,7 +130,7 @@ async def on_message(msg):
         await send_image(msg.channel, 'frootloops.png')
 
     elif message_has_trigger(msg, '(frozen (yogurt|yoghurt)|froyo)'):
-        await send_image(msg.channel, 'froyo.png', caption=random.choice(froyo_captions))
+        await send_image(msg.channel, 'froyo.png', caption=random.choice(strings.froyo_captions))
 
     elif message_has_trigger(msg, 'hannibal (bustin\'?|busting) (thru|through)'):
         await send_image(msg.channel, 'hbt.jpg')
@@ -182,16 +166,26 @@ async def on_message(msg):
     elif message_has_trigger(msg, 'rice'):
         await send_image(msg.channel, 'rice.png')
 
+    elif message_has_trigger(msg, '(scientology|l.? ron hubbard|lrh|hubbard)'):
+        await send_image(msg.channel, 'scientology.png', caption='There is no hell!')
+
     elif message_has_trigger(msg, 'so controversial (yet|but) so brave\\??'):
         await send_image(msg.channel, 'sobrave.gif')
 
-    elif any(message_has_trigger(msg, trigger) for trigger in thetits_triggers):
+    elif any(message_has_trigger(msg, trigger) for trigger in strings.thetits_triggers):
         await send_image(msg.channel, 'thetits.png')
 
     elif message_has_trigger(msg, 'wack'):
         await send_image(msg.channel, 'wack.png')
 
-    elif any(message_has_trigger(msg, trigger) for trigger in wth_triggers):
+    elif message_has_trigger(msg, 'wheel of prizes'):
+        await send_message(msg.channel, "It's time for the Wheel of Prizes!")
+        await asyncio.sleep(1)
+        await send_message(msg.channel, external_images.wheel_of_prizes)
+        await asyncio.sleep(5)
+        await send_message(msg.channel, msg.author.mention + ' you won: ' + random.choice(strings.prizes))
+
+    elif any(message_has_trigger(msg, trigger) for trigger in strings.wth_triggers):
         await send_image(msg.channel, 'wth.gif')
 
 
