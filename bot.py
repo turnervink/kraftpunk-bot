@@ -1,8 +1,13 @@
+import img.external_images as external_images
+
+import io
 import os
 import random
 import re
 
 import discord
+from PIL import Image, ImageDraw
+import requests
 
 client = discord.Client()
 
@@ -12,6 +17,18 @@ froyo_captions = [
     "Why do you ***LIE*** to me??"
 ]
 
+thetits_triggers = [
+    'tits?',
+    'titty',
+    'titties'
+]
+
+wth_triggers = [
+    'what in the (god damn|goddamn) hell are you talkin\'?g? bout\\?',
+    'what are you talking? about\\??',
+    '(what the (hell|fuck)|wt(h|f)) are you talking? about\\??'
+]
+
 
 def message_has_trigger(msg, keyword):
     return re.search('\\b' + keyword + '\\b', msg.content.lower())
@@ -19,6 +36,35 @@ def message_has_trigger(msg, keyword):
 
 async def send_image(channel, img, caption=''):
     await client.send_file(channel, './img/' + img, content=caption)
+
+
+async def send_message(channel, msg):
+    await client.send_message(channel, msg)
+
+
+async def get_last_image_from_channel(channel):
+    async for m in client.logs_from(channel):
+        if m.attachments:
+            try:
+                i = Image.open(io.BytesIO(requests.get(m.attachments[0]['url']).content)).convert('RGBA')
+                return m
+            except OSError:
+                # Not an image attachment
+                continue
+
+    return None
+
+
+async def make_image_purple(img):
+    tmp = Image.new('RGBA', img.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(tmp)
+    draw.rectangle((0, 0) + img.size, fill=(85, 26, 139, 175))
+
+    img = Image.alpha_composite(img, tmp)
+    imgbytearr = io.BytesIO()
+    img.save(imgbytearr, format='PNG')
+    imgbytearr = imgbytearr.getvalue()
+    return io.BytesIO(imgbytearr)
 
 
 @client.event
@@ -33,6 +79,25 @@ async def on_ready():
 async def on_message(msg):
     if msg.author.id == client.user.id:
         return
+
+    elif message_has_trigger(msg, 'what if it was purple'):
+        attachment = None
+
+        try:
+            attachment = msg.attachments[0]['url']
+        except IndexError:
+            try:
+                last_msg = await get_last_image_from_channel(msg.channel)
+                attachment = last_msg.attachments[0]['url']
+            except (IndexError, AttributeError):
+                await client.send_message(msg.channel, 'Nothing to make purple!')
+
+        if attachment is not None:
+            try:
+                img = Image.open(io.BytesIO(requests.get(attachment).content)).convert('RGBA')
+                await client.send_file(msg.channel, await make_image_purple(img), filename='its-purple.png')
+            except OSError:
+                await client.send_message(msg.channel, 'Looks like the last sent file isn\'t an image!')
 
     elif message_has_trigger(msg, '(investigate (311|3/11)|(311|3/11))'):
         await send_image(msg.channel, '311.png')
@@ -78,6 +143,39 @@ async def on_message(msg):
 
     elif message_has_trigger(msg, 'hannibal (bustin\'?|busting) (thru|through)'):
         await send_image(msg.channel, 'hbt.jpg')
+
+    elif message_has_trigger(msg, 'boo'):
+        await send_image(msg.channel, 'imright.png')
+
+    elif message_has_trigger(msg, 'lettuce'):
+        await send_image(msg.channel, 'lettuce.png')
+
+    elif message_has_trigger(msg, '(morpheus|matrix)'):
+        await send_image(msg.channel, 'morpheus.png')
+
+    elif message_has_trigger(msg, 'questlove'):
+        if message_has_trigger(msg, "questlove you're not in the house"):
+            await send_image(msg.channel, 'notinthehouse.png')
+        else:
+            await send_image(msg.channel, 'questlove.png')
+
+    elif message_has_trigger(msg, '(get yourself together|move to (philly|philadelphia)|philly|philadelphia|hummus)'):
+        await send_message(msg.channel, external_images.philly)
+
+    elif message_has_trigger(msg, 'rice'):
+        await send_image(msg.channel, 'rice.png')
+
+    elif message_has_trigger(msg, 'so controversial (yet|but) so brave\\??'):
+        await send_image(msg.channel, 'sobrave.gif')
+
+    elif any(message_has_trigger(msg, trigger) for trigger in thetits_triggers):
+        await send_image(msg.channel, 'thetits.png')
+
+    elif message_has_trigger(msg, 'wack'):
+        await send_image(msg.channel, 'wack.png')
+
+    elif any(message_has_trigger(msg, trigger) for trigger in wth_triggers):
+        await send_image(msg.channel, 'wth.gif')
 
 
 client.run(os.environ["bot_token"])
