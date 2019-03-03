@@ -160,6 +160,9 @@ async def on_message(msg):
         else:
             await send_image(msg.channel, 'questlove.png')
 
+    elif message_has_trigger(msg, 'ranch'):
+        await send_image(msg.channel, 'ranch.jpg')
+
     elif message_has_trigger(msg, '(get yourself together|move to (philly|philadelphia)|philly|philadelphia|hummus)'):
         await send_message(msg.channel, external_images.philly)
 
