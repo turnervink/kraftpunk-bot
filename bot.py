@@ -34,6 +34,10 @@ def message_has_trigger(msg, keyword):
     return re.search('\\b' + keyword + '\\b', msg.content.lower())
 
 
+def message_mentions_bot(msg):
+    return re.search('<@' + client.user.id + '>', msg.content.lower())
+
+
 async def send_image(channel, img, caption=''):
     await client.send_file(channel, './img/' + img, content=caption)
 
@@ -79,6 +83,9 @@ async def on_ready():
 async def on_message(msg):
     if msg.author.id == client.user.id:
         return
+
+    elif message_mentions_bot(msg) and message_has_trigger(msg, '(thanks|thank you)'):
+        await send_message(msg.channel, "You're welcome " + msg.author.mention)
 
     elif message_has_trigger(msg, 'what if it was purple'):
         attachment = None
@@ -144,8 +151,18 @@ async def on_message(msg):
     elif message_has_trigger(msg, 'hannibal (bustin\'?|busting) (thru|through)'):
         await send_image(msg.channel, 'hbt.jpg')
 
+    elif message_mentions_bot(msg) and message_has_trigger(msg, '(help|what\'s up)'):
+        await send_image(msg.channel, 'heywhatsup.png',
+                         caption="Hey what's up? I'm Kraft Punk! Did you guys know I cannot die?")
+        await send_message(msg.channel, "I'll just be here waiting to drop into the conversation with some "
+                                        "pics from the Eric Andre show")
+        await send_message(msg.channel, "See you later!")
+
     elif message_has_trigger(msg, 'boo'):
         await send_image(msg.channel, 'imright.png')
+
+    elif message_mentions_bot(msg) and message_has_trigger(msg, '(can you leave|leave|get out of here|please leave)'):
+        await send_image(msg.channel, 'leaving.png', caption='Okay, bye!')
 
     elif message_has_trigger(msg, 'lettuce'):
         await send_image(msg.channel, 'lettuce.png')
