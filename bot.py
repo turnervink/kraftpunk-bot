@@ -108,6 +108,9 @@ async def on_message(msg):
     elif message_has_trigger(msg, 'bitch'):
         await send_image(msg.channel, 'bitch.png')
 
+    elif message_has_trigger(msg, '(mall|shopping|shoppin\'?)'):
+        await send_image(msg.channel, 'bitchesbeshoppin.png')
+
     elif message_has_trigger(msg, '(burger|hamburger|cheeseburger)s?'):
         await send_image(msg.channel, 'burgers.gif')
 
