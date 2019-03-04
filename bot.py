@@ -159,9 +159,9 @@ async def on_message(msg):
 
     elif message_has_trigger(msg, 'questlove'):
         if message_has_trigger(msg, "questlove you're not in the house"):
-            await send_image(msg.channel, 'notinthehouse.png')
+            await send_image(msg.channel, 'notinthehouse.png', caption="You're nowhere")
         else:
-            await send_image(msg.channel, 'questlove.png')
+            await send_image(msg.channel, 'questlove.png', caption="Hey " + msg.author.mention + "! Questlove's in the house!")
 
     elif message_has_trigger(msg, 'ranch'):
         await send_image(msg.channel, 'ranch.jpg')
