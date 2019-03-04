@@ -182,7 +182,7 @@ async def on_message(msg):
         await send_image(msg.channel, 'wack.png')
 
     elif message_has_trigger(msg, 'wheel of prizes'):
-        await send_message(msg.channel, external_images.wheel_intro + " It's time for the Wheel of Prizes!")
+        await send_message(msg.channel, "It's time for the Wheel of Prizes!\n" + external_images.wheel_intro)
         await asyncio.sleep(1)
         await send_message(msg.channel, external_images.wheel_spin)
         await asyncio.sleep(1)
