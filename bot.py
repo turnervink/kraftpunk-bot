@@ -151,6 +151,23 @@ async def on_message(msg):
     elif message_mentions_bot(msg) and message_has_trigger(msg, '(can you leave|leave|get out of here|please leave)'):
         await send_image(msg.channel, 'leaving.png', caption='Okay, bye!')
 
+    elif message_has_trigger(msg, 'let me in'):
+        base = Image.open('./img/letmein.jpg')
+        avatar = Image.open(io.BytesIO(requests.get(msg.author.avatar_url).content))
+
+        avatar_sm = avatar.resize((100, 100))
+        avatar_lg = avatar.resize((240, 240))
+
+        base.paste(avatar_sm, box=(344, 116))
+        base.paste(avatar_lg, box=(506, 440))
+
+        edited_base_bytes = io.BytesIO()
+        base.save(edited_base_bytes, format="JPEG")
+        edited_base_bytes = edited_base_bytes.getvalue()
+        base.close()
+
+        await client.send_file(msg.channel, io.BytesIO(edited_base_bytes), filename='letmein.jpg')
+
     elif message_has_trigger(msg, 'lettuce'):
         await send_image(msg.channel, 'lettuce.png')
 
