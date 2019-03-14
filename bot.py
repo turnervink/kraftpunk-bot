@@ -135,6 +135,9 @@ async def on_message(msg):
     elif message_has_trigger(msg, '(frozen (yogurt|yoghurt)|froyo)'):
         await send_image(msg.channel, 'froyo.png', caption=random.choice(strings.froyo_captions))
 
+    elif message_has_trigger(msg, '(gas|gasoline|petrol|fuel)'):
+        await send_image(msg.channel, 'gas.png')
+
     elif message_has_trigger(msg, 'hannibal (bustin\'?|busting) (thru|through)'):
         await send_image(msg.channel, 'hbt.jpg')
 
@@ -179,6 +182,9 @@ async def on_message(msg):
             await send_image(msg.channel, 'notinthehouse.png', caption="You're nowhere")
         else:
             await send_image(msg.channel, 'questlove.png', caption="Hey " + msg.author.mention + "! Questlove's in the house!")
+
+    elif message_has_trigger(msg, '((order|get) pizzas?|(order|get) some pizzas?|order a pizza|pizza delivered)'):
+        await send_image(msg.channel, 'pizza.jpg', caption="TIME TO DELIVER A PIZZA BALL")
 
     elif message_has_trigger(msg, 'ranch'):
         await send_image(msg.channel, 'ranch.jpg')
