@@ -8,10 +8,29 @@ import re
 
 import asyncio
 import discord
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 from PIL import Image, ImageDraw
 import requests
 
 client = discord.Client()
+
+fb_creds = credentials.Certificate({
+    "type": "service_account",
+    "project_id": "kraft-punk-bot",
+    "private_key_id": os.environ["fb_key_id"],
+    "private_key": os.environ["fb_key"],
+    "client_email": os.environ["fb_email"],
+    "client_id": os.environ["fb_client_id"],
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": os.environ["fb_cert_url"]
+})
+firebase_admin.initialize_app(fb_creds)
+
+db = firestore.client()
 
 
 def message_has_trigger(msg, keyword):
@@ -61,6 +80,13 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
+
+    mutes_ref = db.collection(u'mutes')
+    servers = mutes_ref.get()
+
+    for server in servers:
+        print(u'{} == {}'.format(server.id, server.to_dict()))
+
 
 
 @client.event
@@ -181,7 +207,8 @@ async def on_message(msg):
         if message_has_trigger(msg, "questlove you're not in the house"):
             await send_image(msg.channel, 'notinthehouse.png', caption="You're nowhere")
         else:
-            await send_image(msg.channel, 'questlove.png', caption="Hey " + msg.author.mention + "! Questlove's in the house!")
+            await send_image(msg.channel, 'questlove.png',
+                             caption="Hey " + msg.author.mention + "! Questlove's in the house!")
 
     elif message_has_trigger(msg, '((order|get) pizzas?|(order|get) some pizzas?|order a pizza|pizza delivered)'):
         await send_image(msg.channel, 'pizza.jpg', caption="TIME TO DELIVER A PIZZA BALL")
