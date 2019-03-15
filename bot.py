@@ -20,7 +20,7 @@ fb_creds = credentials.Certificate({
     "type": "service_account",
     "project_id": "kraft-punk-bot",
     "private_key_id": os.environ["fb_key_id"],
-    "private_key": os.environ["fb_key"],
+    "private_key": os.environ["fb_key"].replace(r'\n', '\n'),
     "client_email": os.environ["fb_email"],
     "client_id": os.environ["fb_client_id"],
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
