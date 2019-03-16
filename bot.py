@@ -41,6 +41,33 @@ def message_mentions_bot(msg):
     return re.search('<@' + client.user.id + '>', msg.content.lower())
 
 
+async def channel_is_muted(server_id, channel_id):
+    server_ref = db.collection(u'mutes').document(str(server_id))
+    channel_ref = server_ref.collection(u'channels').document(str(channel_id))
+
+    channel = channel_ref.get()
+
+    return channel.get(u'muted')
+
+
+async def mute_channel(server_id, channel_id):
+    server_ref = db.collection(u'mutes').document(str(server_id))
+    server_ref.collection(u'channels').document(str(channel_id)).set({
+        u'muted': True
+    })
+
+    return
+
+
+async def unmute_channel(server_id, channel_id):
+    server_ref = db.collection(u'mutes').document(str(server_id))
+    server_ref.collection(u'channels').document(str(channel_id)).set({
+        u'muted': False
+    })
+
+    return
+
+
 async def send_image(channel, img, caption=''):
     await client.send_file(channel, './img/' + img, content=caption)
 
@@ -81,17 +108,21 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
-    mutes_ref = db.collection(u'mutes')
-    servers = mutes_ref.get()
-
-    for server in servers:
-        print(u'{} == {}'.format(server.id, server.to_dict()))
-
-
 
 @client.event
 async def on_message(msg):
-    if msg.author.id == client.user.id:
+    if message_mentions_bot(msg) and message_has_trigger(msg, 'mute'):
+        await mute_channel(msg.server.id, msg.channel.id)
+        await send_message(msg.channel, "Muted in this channel")
+
+    elif message_mentions_bot(msg) and message_has_trigger(msg, 'unmute'):
+        await unmute_channel(msg.server.id, msg.channel.id)
+        await send_message(msg.channel, "Un-muted in this channel")
+
+    elif await channel_is_muted(msg.server.id, msg.channel.id):
+        return
+
+    elif msg.author.id == client.user.id:
         return
 
     elif message_mentions_bot(msg) and message_has_trigger(msg, '(thanks|thank you)'):
