@@ -47,7 +47,29 @@ async def channel_is_muted(server_id, channel_id):
 
     channel = channel_ref.get()
 
+    print("Channel {} in server {} mute: {}".format(channel_id, server_id, channel.get(u'muted')))
+
     return channel.get(u'muted')
+
+
+async def mute_channel(server_id, channel_id):
+    print("muting")
+    server_ref = db.collection(u'mutes').document(str(server_id))
+    server_ref.collection(u'channels').document(str(channel_id)).set({
+        u'muted': True
+    })
+
+    return
+
+
+async def unmute_channel(server_id, channel_id):
+    print("un-muting")
+    server_ref = db.collection(u'mutes').document(str(server_id))
+    server_ref.collection(u'channels').document(str(channel_id)).set({
+        u'muted': False
+    })
+
+    return
 
 
 async def send_image(channel, img, caption=''):
@@ -93,7 +115,15 @@ async def on_ready():
 
 @client.event
 async def on_message(msg):
-    if await channel_is_muted(msg.server.id, msg.channel.id):
+    if message_mentions_bot(msg) and message_has_trigger(msg, 'mute'):
+        await mute_channel(msg.server.id, msg.channel.id)
+        await send_message(msg.channel, "Muted in this channel")
+
+    elif message_mentions_bot(msg) and message_has_trigger(msg, 'unmute'):
+        await unmute_channel(msg.server.id, msg.channel.id)
+        await send_message(msg.channel, "Un-muted in this channel")
+
+    elif await channel_is_muted(msg.server.id, msg.channel.id):
         return
 
     elif msg.author.id == client.user.id:
