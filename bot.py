@@ -47,13 +47,10 @@ async def channel_is_muted(server_id, channel_id):
 
     channel = channel_ref.get()
 
-    print("Channel {} in server {} mute: {}".format(channel_id, server_id, channel.get(u'muted')))
-
     return channel.get(u'muted')
 
 
 async def mute_channel(server_id, channel_id):
-    print("muting")
     server_ref = db.collection(u'mutes').document(str(server_id))
     server_ref.collection(u'channels').document(str(channel_id)).set({
         u'muted': True
@@ -63,7 +60,6 @@ async def mute_channel(server_id, channel_id):
 
 
 async def unmute_channel(server_id, channel_id):
-    print("un-muting")
     server_ref = db.collection(u'mutes').document(str(server_id))
     server_ref.collection(u'channels').document(str(channel_id)).set({
         u'muted': False
