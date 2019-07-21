@@ -38,7 +38,7 @@ def message_has_trigger(msg, keyword):
 
 
 def message_mentions_bot(msg):
-    return re.search('<@' + client.user.id + '>', msg.content.lower())
+    return re.search('<@' + str(client.user.id) + '>', msg.content.lower())
 
 
 async def channel_is_muted(server_id, channel_id):
@@ -69,15 +69,15 @@ async def unmute_channel(server_id, channel_id):
 
 
 async def send_image(channel, img, caption=''):
-    await client.send_file(channel, './img/' + img, content=caption)
+    await channel.send(file=discord.File('./img/' + img), content=caption)
 
 
 async def send_message(channel, msg):
-    await client.send_message(channel, msg)
+    await channel.send(msg)
 
 
 async def get_last_image_from_channel(channel):
-    async for m in client.logs_from(channel):
+    async for m in channel.history():
         if m.attachments:
             try:
                 Image.open(io.BytesIO(requests.get(m.attachments[0]['url']).content)).convert('RGBA')
@@ -112,14 +112,14 @@ async def on_ready():
 @client.event
 async def on_message(msg):
     if message_mentions_bot(msg) and message_has_trigger(msg, 'mute'):
-        await mute_channel(msg.server.id, msg.channel.id)
+        await mute_channel(msg.guilde.id, msg.channel.id)
         await send_message(msg.channel, "Muted in this channel")
 
     elif message_mentions_bot(msg) and message_has_trigger(msg, 'unmute'):
-        await unmute_channel(msg.server.id, msg.channel.id)
+        await unmute_channel(msg.guilde.id, msg.channel.id)
         await send_message(msg.channel, "Un-muted in this channel")
 
-    elif await channel_is_muted(msg.server.id, msg.channel.id):
+    elif await channel_is_muted(msg.guild.id, msg.channel.id):
         return
 
     elif msg.author.id == client.user.id:
@@ -138,14 +138,14 @@ async def on_message(msg):
                 last_msg = await get_last_image_from_channel(msg.channel)
                 attachment = last_msg.attachments[0]['url']
             except (IndexError, AttributeError):
-                await client.send_message(msg.channel, 'Nothing to make purple!')
+                await msg.channel.send('Nothing to make purple!')
 
         if attachment is not None:
             try:
                 img = Image.open(io.BytesIO(requests.get(attachment).content)).convert('RGBA')
-                await client.send_file(msg.channel, await make_image_purple(img), filename='its-purple.png')
+                await msg.channel.send(file=discord.File(await make_image_purple(img), 'its-purple.png'))
             except OSError:
-                await client.send_message(msg.channel, 'Looks like the last sent file isn\'t an image!')
+                await msg.channel.send('Looks like the last sent file isn\'t an image!')
 
     elif message_has_trigger(msg, '(investigate (311|3/11)|(311|3/11))'):
         await send_image(msg.channel, '311.png')
@@ -226,12 +226,12 @@ async def on_message(msg):
         edited_base_bytes = edited_base_bytes.getvalue()
         base.close()
 
-        await client.send_file(msg.channel, io.BytesIO(edited_base_bytes), filename='letmein.jpg')
+        await msg.channel.send(file=discord.File(io.BytesIO(edited_base_bytes), 'letmein.jpg'))
 
     elif message_has_trigger(msg, 'lettuce'):
         await send_image(msg.channel, 'lettuce.png')
 
-    elif message_has_trigger(msg, '(morpheus|matrix)'):
+    elif message_has_trigger(msg, 'beer'):
         await send_image(msg.channel, 'morpheus.png')
 
     elif message_has_trigger(msg, 'questlove'):
@@ -276,6 +276,9 @@ async def on_message(msg):
 
     elif any(message_has_trigger(msg, trigger) for trigger in strings.wth_triggers):
         await send_image(msg.channel, 'wth.gif')
+
+    elif message_has_trigger(msg, '(brb|be right back)'):
+        await send_image(msg.channel, 'brb/' + random.choice(os.listdir('./img/brb')))
 
 
 client.run(os.environ["bot_token"])
