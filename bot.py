@@ -231,7 +231,7 @@ async def on_message(msg):
     elif message_has_trigger(msg, 'lettuce'):
         await send_image(msg.channel, 'lettuce.png')
 
-    elif message_has_trigger(msg, '(morpheus|matrix)'):
+    elif message_has_trigger(msg, 'beer'):
         await send_image(msg.channel, 'morpheus.png')
 
     elif message_has_trigger(msg, 'questlove'):
@@ -276,6 +276,9 @@ async def on_message(msg):
 
     elif any(message_has_trigger(msg, trigger) for trigger in strings.wth_triggers):
         await send_image(msg.channel, 'wth.gif')
+
+    elif message_has_trigger(msg, '(brb|be right back)'):
+        await send_image(msg.channel, 'brb/' + random.choice(os.listdir('./img/brb')))
 
 
 client.run(os.environ["bot_token"])
