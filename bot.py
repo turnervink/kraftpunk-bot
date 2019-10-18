@@ -128,7 +128,7 @@ async def on_message(msg):
     elif message_mentions_bot(msg) and message_has_trigger(msg, '(thanks|thank you)'):
         await send_message(msg.channel, "You're welcome " + msg.author.mention)
 
-    elif message_has_trigger(msg, 'what if it was purple'):
+    elif message_has_trigger(msg, 'what if it (was|were) purple'):
         attachment = None
 
         try:
