@@ -112,11 +112,11 @@ async def on_ready():
 @client.event
 async def on_message(msg):
     if message_mentions_bot(msg) and message_has_trigger(msg, 'mute'):
-        await mute_channel(msg.guilde.id, msg.channel.id)
+        await mute_channel(msg.guild.id, msg.channel.id)
         await send_message(msg.channel, "Muted in this channel")
 
     elif message_mentions_bot(msg) and message_has_trigger(msg, 'unmute'):
-        await unmute_channel(msg.guilde.id, msg.channel.id)
+        await unmute_channel(msg.guild.id, msg.channel.id)
         await send_message(msg.channel, "Un-muted in this channel")
 
     elif await channel_is_muted(msg.guild.id, msg.channel.id):
