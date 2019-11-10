@@ -80,7 +80,7 @@ async def get_last_image_from_channel(channel):
     async for m in channel.history():
         if m.attachments:
             try:
-                Image.open(io.BytesIO(requests.get(m.attachments[0]['url']).content)).convert('RGBA')
+                Image.open(io.BytesIO(requests.get(m.attachments[0].url).content)).convert('RGBA')
                 return m
             except OSError:
                 # Not an image attachment
@@ -132,11 +132,11 @@ async def on_message(msg):
         attachment = None
 
         try:
-            attachment = msg.attachments[0]['url']
+            attachment = msg.attachments[0].url
         except IndexError:
             try:
                 last_msg = await get_last_image_from_channel(msg.channel)
-                attachment = last_msg.attachments[0]['url']
+                attachment = last_msg.attachments[0].url
             except (IndexError, AttributeError):
                 await msg.channel.send('Nothing to make purple!')
 
@@ -162,26 +162,11 @@ async def on_message(msg):
     elif message_has_trigger(msg, 'bird up'):
         await send_image(msg.channel, 'birdup.jpg')
 
-    elif message_has_trigger(msg, 'bitch'):
-        await send_image(msg.channel, 'bitch.png')
-
-    elif message_has_trigger(msg, '(mall|shopping|shoppin\'?)'):
-        await send_image(msg.channel, 'bitchesbeshoppin.png')
-
-    elif message_has_trigger(msg, '(burger|hamburger|cheeseburger)s?'):
-        await send_image(msg.channel, 'burgers.gif')
-
     elif message_has_trigger(msg, 'call me'):
         await send_image(msg.channel, 'callme.jpg')
 
     elif message_has_trigger(msg, 'coachella'):
         await send_image(msg.channel, 'coachella.png')
-
-    elif message_has_trigger(msg, 'who killed hannibal\\??'):
-        await send_image(msg.channel, 'death.png')
-
-    elif message_has_trigger(msg, '(dinosaur|dino|stegosaurus|safety stegosaurus|safety dinosaur)'):
-        await send_image(msg.channel, 'dinosaur.png')
 
     elif message_has_trigger(msg, '(catch the excitement|excited)'):
         await send_image(msg.channel, 'excitement.png')
@@ -195,18 +180,12 @@ async def on_message(msg):
     elif message_has_trigger(msg, '(gas|gasoline|petrol|fuel)'):
         await send_image(msg.channel, 'gas.png')
 
-    elif message_has_trigger(msg, 'hannibal (bustin\'?|busting) (thru|through)'):
-        await send_image(msg.channel, 'hbt.jpg')
-
     elif message_mentions_bot(msg) and message_has_trigger(msg, '(help|what\'s up)'):
         await send_image(msg.channel, 'heywhatsup.png',
                          caption="Hey what's up? I'm Kraft Punk! Did you guys know I cannot die?")
         await send_message(msg.channel, "I'll just be here waiting to drop into the conversation with some "
                                         "pics from the Eric Andre show")
         await send_message(msg.channel, "See you later!")
-
-    elif message_has_trigger(msg, 'boo'):
-        await send_image(msg.channel, 'imright.png')
 
     elif message_mentions_bot(msg) and message_has_trigger(msg, '(can you leave|leave|get out of here|please leave)'):
         await send_image(msg.channel, 'leaving.png', caption='Okay, bye!')
@@ -227,12 +206,6 @@ async def on_message(msg):
         base.close()
 
         await msg.channel.send(file=discord.File(io.BytesIO(edited_base_bytes), 'letmein.jpg'))
-
-    elif message_has_trigger(msg, 'lettuce'):
-        await send_image(msg.channel, 'lettuce.png')
-
-    elif message_has_trigger(msg, 'beer'):
-        await send_image(msg.channel, 'morpheus.png')
 
     elif message_has_trigger(msg, 'questlove'):
         if message_has_trigger(msg, "questlove you're not in the house"):
@@ -261,9 +234,6 @@ async def on_message(msg):
 
     elif any(message_has_trigger(msg, trigger) for trigger in strings.thetits_triggers):
         await send_image(msg.channel, 'thetits.png')
-
-    elif message_has_trigger(msg, 'wack'):
-        await send_image(msg.channel, 'wack.png')
 
     elif message_has_trigger(msg, 'wheel of prizes'):
         await send_message(msg.channel, "It's time for the Wheel of Prizes!\n" + external_images.wheel_intro)
