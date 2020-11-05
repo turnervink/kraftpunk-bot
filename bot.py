@@ -247,6 +247,18 @@ async def on_message(msg):
     elif any(message_has_trigger(msg, trigger) for trigger in strings.wth_triggers):
         await send_image(msg.channel, 'wth.gif')
 
+    elif message_has_trigger(msg, '(scream|screaming)'):
+        await send_image(msg.channel, 'screamtime.png')
+
+    elif message_has_trigger(msg, 'lizzo'):
+        await send_image(msg.channel, 'lizzo.png')
+
+    elif message_has_trigger(msg, '(ice cream|icecream)'):
+        await send_image(msg.channel, 'icecream.png')
+
+    elif message_has_trigger(msg, 'lo mein'):
+        await send_image(msg.channel, 'lomein.png')
+
     elif message_has_trigger(msg, '(brb|be right back)'):
         await send_image(msg.channel, 'brb/' + random.choice(os.listdir('./img/brb')))
 
