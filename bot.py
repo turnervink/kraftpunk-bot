@@ -38,7 +38,7 @@ def message_has_trigger(msg, keyword):
 
 
 def message_mentions_bot(msg):
-    return re.search('<@' + str(client.user.id) + '>', msg.content.lower())
+    return client.user.mentioned_in(msg)
 
 
 async def channel_is_muted(server_id, channel_id):
