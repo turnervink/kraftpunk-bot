@@ -68,6 +68,10 @@ async def unmute_channel(server_id, channel_id):
     return
 
 
+async def get_muted_channels(server_id):
+    return db.collection(u'mutes').document(str(server_id)).collection(u'channels').where(u'muted', u'==', True).get()
+
+
 async def send_image(channel, img, caption=''):
     await channel.send(file=discord.File('./img/' + img), content=caption)
 
@@ -118,6 +122,15 @@ async def on_message(msg):
     elif message_mentions_bot(msg) and message_has_trigger(msg, 'unmute'):
         await unmute_channel(msg.guild.id, msg.channel.id)
         await send_message(msg.channel, "Un-muted in this channel")
+
+    elif message_mentions_bot(msg) and message_has_trigger(msg, 'listmuted'):
+        muted_channels = await get_muted_channels(msg.guild.id)
+
+        response = "Channels muted in this server:\n"
+        for channel in muted_channels:
+            response += f"<#{channel.id}>\n"
+
+        await send_message(msg.channel, response)
 
     elif await channel_is_muted(msg.guild.id, msg.channel.id):
         return
