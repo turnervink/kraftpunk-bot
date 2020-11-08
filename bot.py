@@ -5,12 +5,15 @@ import io
 import os
 import random
 import re
+from datetime import datetime
+from time import time
 
 import asyncio
 import discord
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+import parsedatetime as pdt
 from PIL import Image, ImageDraw
 import requests
 
@@ -47,14 +50,35 @@ async def channel_is_muted(server_id, channel_id):
 
     channel = channel_ref.get()
 
-    return channel.get(u'muted')
+    try:
+        mute_end_time = channel.get(u'end')
+    except KeyError:
+        mute_end_time = None
+
+    if mute_end_time is not None and int(time()) >= mute_end_time:
+        await unmute_channel(server_id, channel_id)
+        return False
+    else:
+        return channel.get(u'muted')
 
 
-async def mute_channel(server_id, channel_id):
-    server_ref = db.collection(u'mutes').document(str(server_id))
-    server_ref.collection(u'channels').document(str(channel_id)).set({
-        u'muted': True
-    })
+async def mute_channel(server_id, channel_id, duration):
+    if duration is not None:
+        cal = pdt.Calendar()
+        time_struct, parse_status = cal.parse(duration)
+
+        mute_end = int(datetime(*time_struct[:6]).timestamp())
+
+        server_ref = db.collection(u'mutes').document(str(server_id))
+        server_ref.collection(u'channels').document(str(channel_id)).set({
+            u'muted': True,
+            u'end': mute_end
+        })
+    else:
+        server_ref = db.collection(u'mutes').document(str(server_id))
+        server_ref.collection(u'channels').document(str(channel_id)).set({
+            u'muted': True
+        })
 
     return
 
@@ -116,8 +140,17 @@ async def on_ready():
 @client.event
 async def on_message(msg):
     if message_mentions_bot(msg) and message_has_trigger(msg, 'mute'):
-        await mute_channel(msg.guild.id, msg.channel.id)
-        await send_message(msg.channel, "Muted in this channel")
+        try:
+            duration = msg.content.split(" ")[2]
+        except IndexError:
+            duration = None
+
+        await mute_channel(msg.guild.id, msg.channel.id, duration)
+
+        if duration is not None:
+            await send_message(msg.channel, f"Muted in this channel for {duration}")
+        else:
+            await send_message(msg.channel, "Muted in this channel until you manually unmute")
 
     elif message_mentions_bot(msg) and message_has_trigger(msg, 'unmute'):
         await unmute_channel(msg.guild.id, msg.channel.id)
