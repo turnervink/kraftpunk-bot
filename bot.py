@@ -308,5 +308,37 @@ async def on_message(msg):
     elif message_has_trigger(msg, '(brb|be right back)'):
         await send_image(msg.channel, 'brb/' + random.choice(os.listdir('./img/brb')))
 
+    elif message_has_trigger(msg, 'john cena'):
+        await send_image(msg.channel, 'johncena.png')
+
+    elif message_has_trigger(msg, 'levar burton') \
+            or message_has_trigger(msg, 'reading rainbow') \
+            or message_has_trigger(msg, 'geordi laforge'):
+        await send_image(msg.channel, 'levarburton.png')
+
+    elif message_has_trigger(msg, 'asap ferg') or message_has_trigger(msg, 'a$ap ferg'):
+        await send_image(msg.channel, 'asapferg.png')
+
+    elif message_has_trigger(msg, 'cops?'):
+        await send_image(msg.channel, 'cop.png')
+
+    elif message_has_trigger(msg, 'h2o'):
+        await send_image(msg.channel, 'h2o.png')
+
+    elif message_has_trigger(msg, 'h2o2') or message_has_trigger(msg, 'hydrogen peroxide'):
+        await send_image(msg.channel, 'h2o2.png')
+
+    elif message_has_trigger(msg, 'merlot'):
+        await send_image(msg.channel, 'merlot.png')
+
+    elif message_has_trigger(msg, 'moth'):
+        await send_image(msg.channel, 'moth water.png')
+
+    elif message_has_trigger(msg, '(what the fuck|wtf|what) is going? on right now\?*'):
+        await send_image(msg.channel, 'wtf is going on.png')
+
+    elif message_has_trigger(msg, '(don\'?t|never) fuck with'):
+        await send_image(msg.channel, 'never fuck with.png')
+
 
 client.run(os.environ["bot_token"])
