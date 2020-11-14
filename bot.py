@@ -340,5 +340,8 @@ async def on_message(msg):
     elif message_has_trigger(msg, '(don\'?t|never) fuck with'):
         await send_image(msg.channel, 'never fuck with.png')
 
+    elif message_has_trigger(msg, 'thatcher'):
+        await send_image(msg.channel, 'thatcher.png')
+
 
 client.run(os.environ["bot_token"])
