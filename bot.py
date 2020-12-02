@@ -320,7 +320,12 @@ async def on_message(msg):
         await send_image(msg.channel, 'asapferg.png')
 
     elif message_has_trigger(msg, 'cops?'):
-        await send_image(msg.channel, 'cop.png')
+        chance = random.random()
+
+        if chance > 0.5:
+            await send_image(msg.channel, 'cop.png')
+        else:
+            await send_image(msg.channel, "cop2.png")
 
     elif message_has_trigger(msg, 'h2o'):
         await send_image(msg.channel, 'h2o.png')
@@ -340,8 +345,23 @@ async def on_message(msg):
     elif message_has_trigger(msg, '(don\'?t|never) fuck with'):
         await send_image(msg.channel, 'never fuck with.png')
 
-    elif message_has_trigger(msg, 'thatcher'):
+    elif message_has_trigger(msg, 'thatcher\'?s?'):
         await send_image(msg.channel, 'thatcher.png')
+
+    elif message_has_trigger(msg, "avocadoe?s?"):
+        await send_image(msg.channel, "avocado.png")
+
+    elif message_has_trigger(msg, "fish tank"):
+        await send_image(msg.channel, "fishtank.png")
+
+    elif message_has_trigger(msg, "nostradamus"):
+        await send_image(msg.channel, "nostradamus.png")
+
+    elif message_has_trigger(msg, "(wrestler|wrestling)"):
+        await send_image(msg.channel, "wrestler.png")
+
+    elif message_has_trigger(msg, "sports?"):
+        await send_image(msg.channel, "sports.png")
 
 
 client.run(os.environ["bot_token"])
