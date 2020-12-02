@@ -363,5 +363,8 @@ async def on_message(msg):
     elif message_has_trigger(msg, "sports?"):
         await send_image(msg.channel, "sports.png")
 
+    elif message_has_trigger(msg, "pho"):
+        await send_image(msg.channel, "pho.png")
+
 
 client.run(os.environ["bot_token"])
