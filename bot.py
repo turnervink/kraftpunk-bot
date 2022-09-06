@@ -3,6 +3,8 @@ import strings as strings
 
 import io
 import os
+from os.path import exists
+import sys
 import random
 import re
 from datetime import datetime
@@ -11,7 +13,6 @@ from time import time
 import asyncio
 import discord
 import firebase_admin
-from firebase_admin import credentials
 from firebase_admin import firestore
 import parsedatetime as pdt
 from PIL import Image, ImageDraw
@@ -19,20 +20,7 @@ import requests
 
 client = discord.Client()
 
-fb_creds = credentials.Certificate({
-    "type": "service_account",
-    "project_id": "kraft-punk-bot",
-    "private_key_id": os.environ["fb_key_id"],
-    "private_key": os.environ["fb_key"].replace(r'\n', '\n'),
-    "client_email": os.environ["fb_email"],
-    "client_id": os.environ["fb_client_id"],
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": os.environ["fb_cert_url"]
-})
-firebase_admin.initialize_app(fb_creds)
-
+firebase_admin.initialize_app()
 db = firestore.client()
 
 
@@ -131,10 +119,9 @@ async def make_image_purple(img):
 
 @client.event
 async def on_ready():
-    print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
-    print('------')
+    print(f'Bot ready! Logged in as {client.user.name} - ID: {client.user.id}')
+    guilds = list(guild.name for guild in client.guilds)
+    print(f"Logged in on: {guilds}")
 
 
 @client.event
@@ -366,5 +353,8 @@ async def on_message(msg):
     elif message_has_trigger(msg, "pho"):
         await send_image(msg.channel, "pho.png")
 
+if not exists(os.environ["GOOGLE_APPLICATION_CREDENTIALS"]):
+    print(f"No Firebase credentials file at {os.environ['GOOGLE_APPLICATION_CREDENTIALS']}")
+    sys.exit(1)
 
-client.run(os.environ["bot_token"])
+client.run(os.environ["BOT_TOKEN"])
