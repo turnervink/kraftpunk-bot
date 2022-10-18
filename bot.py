@@ -1,24 +1,25 @@
+import asyncio
+import io
+import os
+import random
+import re
+import sys
+from datetime import datetime
+from os.path import exists
+from time import time
+
+import discord
+import firebase_admin
+import parsedatetime as pdt
+import requests
+from PIL import Image, ImageDraw
+from firebase_admin import firestore
+
 import img.external_images as external_images
 import strings as strings
 
-import io
-import os
-from os.path import exists
-import sys
-import random
-import re
-from datetime import datetime
-from time import time
-
-import asyncio
-import discord
-import firebase_admin
-from firebase_admin import firestore
-import parsedatetime as pdt
-from PIL import Image, ImageDraw
-import requests
-
-client = discord.Client()
+intents = discord.Intents(guild_messages=True, message_content=True, guilds=True)
+client = discord.Client(intents=intents)
 
 firebase_admin.initialize_app()
 db = firestore.client()
