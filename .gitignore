@@ -3,4 +3,5 @@ venv
 .envrc
 .idea
 __pycache__
+Makefile
 config/db-creds.json
