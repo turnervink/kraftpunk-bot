@@ -226,7 +226,7 @@ async def on_message(msg):
 
     elif message_has_trigger(msg, 'let me in'):
         base = Image.open('./img/letmein.jpg')
-        avatar = Image.open(io.BytesIO(requests.get(msg.author.avatar_url).content))
+        avatar = Image.open(io.BytesIO(requests.get(msg.author.avatar).content))
 
         avatar_sm = avatar.resize((100, 100))
         avatar_lg = avatar.resize((240, 240))
