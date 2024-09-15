@@ -1,7 +1,6 @@
-venv
 *.env
 .envrc
 .idea
 __pycache__
-Makefile
+justfile
 config/db-creds.json
