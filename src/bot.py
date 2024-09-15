@@ -86,7 +86,7 @@ async def get_muted_channels(server_id):
 
 
 async def send_image(channel, img, caption=''):
-    await channel.send(file=discord.File('./img/' + img), content=caption)
+    await channel.send(file=discord.File('src/img/' + img), content=caption)
 
 
 async def send_message(channel, msg):
@@ -225,7 +225,7 @@ async def on_message(msg):
         await send_image(msg.channel, 'leaving.png', caption='Okay, bye!')
 
     elif message_has_trigger(msg, 'let me in'):
-        base = Image.open('./img/letmein.jpg')
+        base = Image.open('src/img/letmein.jpg')
         avatar = Image.open(io.BytesIO(requests.get(msg.author.avatar).content))
 
         avatar_sm = avatar.resize((100, 100))
