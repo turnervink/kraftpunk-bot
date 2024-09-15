@@ -2,5 +2,4 @@
 .envrc
 .idea
 __pycache__
-justfile
 config/db-creds.json
