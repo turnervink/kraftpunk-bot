@@ -10,23 +10,38 @@ Invite the bot with this link:
 https://discord.com/oauth2/authorize?client_id=397901256602943489
 
 ## Development
-Kraft Punk Bot uses Python with Poetry for dependency management, and Google Firebase as a database.
+Kraft Punk Bot uses Python with Poetry for dependency management, and Postgres as a database.
 
 - Clone the project
 - Install dependenices with `poetry install`
-- Obtain your [Firebase service account credentials](https://firebase.google.com/docs/admin/setup#initialize-sdk). Name the file `db-creds.json` and place it in the `config` directory of the project.
 - Set the following environment variables with your development values:
 ```
-BOT_TOKEN=<a Discord app bot token>
-GOOGLE_APPLICATION_CREDENTIALS=config/db-creds.json
+BOT_TOKEN=<discord bot token>
+
+# Database information for local development
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DATABASE=postgres
+POSTGRES_USERNAME=<dev postgres username>
+POSTGRES_PASSWORD=<dev postgres password>
 ```
+- Create a `pgdata` directory in the project root
+- Start a local database with `docker compose -f docker-compose.local.yml up -d`
 - Start the bot with `poetry run python src/bot.py`
+- When you're done stop the local database with `docker compose -f docker-compose.local.yml down`
 
 ## Deployment
-- Create a `.env` file with the same variables as above set to your production values
-- Build and tag the image: `docker build -t kraftpunk-bot:latest .`
-- Run the image, passing in your `.env` file and mounting the directory with the Firebase credentials file to the path you specified in `GOOGLE_APPLICATION_CREDENTIALS`:  
-`docker run --env-file .env -v /path/to/creds/dir:${GOOGLE_APPLICATION_CREDENTIALS} kraftpunk-bot:latest` 
+- Create a `.env` file with your production values:
+```
+# The token for your Discord bot
+BOT_TOKEN=<discord bot token>
+
+# Database information
+POSTGRES_USERNAME=<dev postgres username>
+POSTGRES_PASSWORD=<dev postgres password>
+```
+- Build the production image with `docker compose build`
+- Use `docker compose up` to start the bot's container stack on your production machine
 
 ## Contributing
 If you for some reason want to contribute to this silly thing feel free to fork it and open a PR!
