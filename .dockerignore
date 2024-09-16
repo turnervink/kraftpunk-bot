@@ -2,4 +2,4 @@
 .envrc
 .idea
 __pycache__
-config/db-creds.json
+pgdata

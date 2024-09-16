@@ -2,6 +2,12 @@ docker-repo := "192.168.1.101:5000"
 image-name := "kraftpunk-bot"
 image-tag := "latest"
 
+start-db:
+	docker compose -f docker-compose.local.yml up -d
+
+stop-db:
+	docker compose -f docker-compose.local.yml down
+
 run:
 	poetry run python src/bot.py
 

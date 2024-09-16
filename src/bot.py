@@ -9,20 +9,25 @@ from os.path import exists
 from time import time
 
 import discord
-import firebase_admin
 import parsedatetime as pdt
+import psycopg2
 import requests
 from PIL import Image, ImageDraw
-from firebase_admin import firestore
 
+import db
 import img.external_images as external_images
 import strings as strings
 
-intents = discord.Intents(guild_messages=True, message_content=True, guilds=True)
+intents = discord.Intents(
+    guild_messages=True, message_content=True, guilds=True)
 client = discord.Client(intents=intents)
-
-firebase_admin.initialize_app()
-db = firestore.client()
+postgres = db.Postgres(
+    os.environ["POSTGRES_HOST"],
+    os.environ["POSTGRES_PORT"],
+    os.environ["POSTGRES_DATABASE"],
+    os.environ["POSTGRES_USERNAME"],
+    os.environ["POSTGRES_PASSWORD"]
+)
 
 
 def message_has_trigger(msg, keyword):
@@ -34,55 +39,27 @@ def message_mentions_bot(msg):
 
 
 async def channel_is_muted(server_id, channel_id):
-    server_ref = db.collection(u'mutes').document(str(server_id))
-    channel_ref = server_ref.collection(u'channels').document(str(channel_id))
+    return postgres.channel_is_muted(server_id, channel_id)
 
-    channel = channel_ref.get()
 
+async def mute_channel(server_id, channel_id):
     try:
-        mute_end_time = channel.get(u'end')
-    except KeyError:
-        mute_end_time = None
-
-    if mute_end_time is not None and int(time()) >= mute_end_time:
-        await unmute_channel(server_id, channel_id)
-        return False
-    else:
-        return channel.get(u'muted')
-
-
-async def mute_channel(server_id, channel_id, duration):
-    if duration is not None:
-        cal = pdt.Calendar()
-        time_struct, parse_status = cal.parse(duration)
-
-        mute_end = int(datetime(*time_struct[:6]).timestamp())
-
-        server_ref = db.collection(u'mutes').document(str(server_id))
-        server_ref.collection(u'channels').document(str(channel_id)).set({
-            u'muted': True,
-            u'end': mute_end
-        })
-    else:
-        server_ref = db.collection(u'mutes').document(str(server_id))
-        server_ref.collection(u'channels').document(str(channel_id)).set({
-            u'muted': True
-        })
+        postgres.create_mute(server_id, channel_id)
+        return 'Muted in this channel'
+    except psycopg2.errors.UniqueViolation as e:
+        print(e)
+        return 'This channel is already muted'
 
     return
 
 
 async def unmute_channel(server_id, channel_id):
-    server_ref = db.collection(u'mutes').document(str(server_id))
-    server_ref.collection(u'channels').document(str(channel_id)).set({
-        u'muted': False
-    })
-
-    return
+    postgres.delete_mute(server_id, channel_id)
+    return 'Un-muted in this channel'
 
 
 async def get_muted_channels(server_id):
-    return db.collection(u'mutes').document(str(server_id)).collection(u'channels').where(u'muted', u'==', True).get()
+    return postgres.get_muted_channels(server_id)
 
 
 async def send_image(channel, img, caption=''):
@@ -97,7 +74,8 @@ async def get_last_image_from_channel(channel):
     async for m in channel.history():
         if m.attachments:
             try:
-                Image.open(io.BytesIO(requests.get(m.attachments[0].url).content)).convert('RGBA')
+                Image.open(io.BytesIO(requests.get(
+                    m.attachments[0].url).content)).convert('RGBA')
                 return m
             except OSError:
                 # Not an image attachment
@@ -128,28 +106,19 @@ async def on_ready():
 @client.event
 async def on_message(msg):
     if message_mentions_bot(msg) and message_has_trigger(msg, 'mute'):
-        try:
-            duration = msg.content.split(" ")[2]
-        except IndexError:
-            duration = None
-
-        await mute_channel(msg.guild.id, msg.channel.id, duration)
-
-        if duration is not None:
-            await send_message(msg.channel, f"Muted in this channel for {duration}")
-        else:
-            await send_message(msg.channel, "Muted in this channel until you manually unmute")
+        mute_result = await mute_channel(msg.guild.id, msg.channel.id)
+        await send_message(msg.channel, mute_result)
 
     elif message_mentions_bot(msg) and message_has_trigger(msg, 'unmute'):
-        await unmute_channel(msg.guild.id, msg.channel.id)
-        await send_message(msg.channel, "Un-muted in this channel")
+        unmute_result = await unmute_channel(msg.guild.id, msg.channel.id)
+        await send_message(msg.channel, unmute_result)
 
     elif message_mentions_bot(msg) and message_has_trigger(msg, 'listmuted'):
         muted_channels = await get_muted_channels(msg.guild.id)
 
         response = "Channels muted in this server:\n"
         for channel in muted_channels:
-            response += f"<#{channel.id}>\n"
+            response += f"<#{channel['channel_id']}>\n"
 
         await send_message(msg.channel, response)
 
@@ -176,7 +145,8 @@ async def on_message(msg):
 
         if attachment is not None:
             try:
-                img = Image.open(io.BytesIO(requests.get(attachment).content)).convert('RGBA')
+                img = Image.open(io.BytesIO(requests.get(
+                    attachment).content)).convert('RGBA')
                 await msg.channel.send(file=discord.File(await make_image_purple(img), 'its-purple.png'))
             except OSError:
                 await msg.channel.send('Looks like the last sent file isn\'t an image!')
@@ -226,7 +196,8 @@ async def on_message(msg):
 
     elif message_has_trigger(msg, 'let me in'):
         base = Image.open('src/img/letmein.jpg')
-        avatar = Image.open(io.BytesIO(requests.get(msg.author.avatar).content))
+        avatar = Image.open(io.BytesIO(
+            requests.get(msg.author.avatar).content))
 
         avatar_sm = avatar.resize((100, 100))
         avatar_lg = avatar.resize((240, 240))
@@ -353,9 +324,5 @@ async def on_message(msg):
 
     elif message_has_trigger(msg, "pho"):
         await send_image(msg.channel, "pho.png")
-
-if not exists(os.environ["GOOGLE_APPLICATION_CREDENTIALS"]):
-    print(f"No Firebase credentials file at {os.environ['GOOGLE_APPLICATION_CREDENTIALS']}")
-    sys.exit(1)
 
 client.run(os.environ["BOT_TOKEN"])
