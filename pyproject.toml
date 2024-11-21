@@ -12,6 +12,7 @@ pillow = "^10.4.0"
 py-cord = "^2.6.0"
 parsedatetime = "^2.6"
 psycopg2-binary = "^2.9.9"
+requests = "^2.32.3"
 
 
 [build-system]
